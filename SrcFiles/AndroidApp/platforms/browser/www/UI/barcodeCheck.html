@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shoesform</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script>
+
+var barcode = '889773948128';
+var brand;
+var name;
+var photo;
+var colour;
+var sku;
+if(typeof localStorage.barcode != 'undefined')
+{
+  barcode = localStorage.barcode;
+}
+
+
+$.get(
+  "https://www.googleapis.com/customsearch/v1",
+  {q : barcode,
+  cx : '011378853985084255944:davb55rnxhg',
+  key : 'AIzaSyCEvYPtohZtc-SMj2B9nFXMq1pIPbIdTrI',
+  num : 1,
+  fields: 'items/pagemap/product, items/pagemap/metatags/og:image' },
+  function(data){
+  brand = data.items[0].pagemap.product[0].brand;
+  name = data.items[0].pagemap.product[0].name;
+  colour = data.items[0].pagemap.product[0].color;
+  sku = data.items[0].pagemap.product[0].sku;
+  photo = data.items[0].pagemap.metatags[0]['og:image'];
+  $("#title").html(brand+" "+name+" "+colour);
+  $("#photo").attr("src", photo);
+  },
+  "json"
+);
+</script>
+</head>
+
+<body class="writetag">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Are these your shoes?</h2>
+                    <div class="row">
+
+                        <div class="col-md-12 col-xs-10 col-xs-offset-1" >
+                          <img id ="photo" src="" style="width:100%; height:100%;">
+                        </div>
+
+                    </div>
+                    <h1 class="text-center shoetitle" id="title">Title </h1>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 writetag-options">
+                            <div><a class="btn btn-default btn-lg writetag-buttons" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" role="button" href="#collapse-1" id="writetag-yes">Yes</a>
+
+</div>
+
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 writetag-options"><a class="btn btn-default btn-lg writetag-buttons" role="button" href="manual.html">No</a></div>
+                        <div class="col-md-12">
+
+<div class="collapse" id="collapse-1">
+<div class="form-group">
+    <label class="control-label">Shoe Size</label>
+    <select class="field-format" id="size">
+        <optgroup label="None">
+            <option value="3.5">UK 3.5</option>
+            <option value="4">UK 4</option>
+            <option value="4.5">UK 4.5</option>
+            <option value="5">UK 5</option>
+            <option value="5.5">UK 5.5</option>
+            <option value="6">UK 6</option>
+            <option value="6.5">UK 6.5</option>
+            <option value="7">UK 7</option>
+            <option value="7.5">UK 7.5</option>
+            <option value="8">UK 8</option>
+            <option value="8.5">UK 8.5</option>
+            <option value="9">UK 9</option>
+            <option value="9.5">UK 9.5</option>
+            <option value="10">UK 10</option>
+            <option value="10.5">UK 10.5</option>
+            <option value="11">UK 11</option>
+            <option value="11.5">UK 11.5</option>
+            <option value="12">UK 12</option>
+            <option value="12.5">UK 12.5</option>
+            <option value="13">UK 13</option>
+        </optgroup>
+    </select>
+</div>
+<div class="form-group">
+    <label class="control-label">NFC ID</label>
+    <input type="text" name="Id" class="field-format" id="nfcid"/>
+</div>
+    <div class="form-group">
+    <button class="btn btn-primary create" type="button" id="#create">Create Tag</button>
+</div>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/ethereumjs-all.min.js"></script>
+    <script src="assets/js/web3.min.js"></script>
+</body>
+<!-- <script>
+// MetaMask injects the web3 library for us.
+  //  window.onload = function() {
+  //    if (typeof web3 === 'undefined') {
+  //      document.getElementById('meta-mask-required').innerHTML = 'You need <a href="https://metamask.io/">MetaMask</a> browser plugin to run this example'
+  //    }
+  //  }
+
+
+   $(":button").click(function() {
+    // $(":input").each(function() {
+   //if($(this).val() === ""){
+    //alert("Empty Fields!!");
+  //}
+    //else{
+    var obj = new Object();
+    obj.c = sku;
+    obj.s = $( "#size" ).val();
+    obj.n = $( "#nfcid" ).val();
+    var json = JSON.stringify(obj);
+    var transaction = createTransaction(json);
+    //alert(transaction);
+    //alert("hello:");
+    var str = web3.toHex(json);
+    // web3.eth.sendTransaction({"to":"0x14459BEDE031d10a5Ab31b6a14D01e151Fac6cAC","value":0,"data":str},function(err, transaction){
+    // if(!err)
+    // alert(transaction);
+    // else
+    // console.log(err);})
+   //}
+     //});
+     });
+
+     function copyFunction(element) {
+       var $temp = $("<input>");
+       $("body").append($temp);
+       $temp.val($(element).text()).select();
+       document.execCommand("copy");
+       $temp.remove();
+     }
+
+</script> -->
+<script>
+$(":button").click(function() {
+ // $(":input").each(function() {
+//if($(this).val() === ""){
+ //alert("Empty Fields!!");
+//}
+ //else{
+ var obj = new Object();
+ obj.c = sku;
+ obj.s = $( "#size" ).val();
+ obj.n = $( "#nfcid" ).val();
+ var json = JSON.stringify(obj);
+ //var transaction = createTransaction(json);
+ //alert(transaction);
+ //alert("hello:");
+ //var str = web3.toHex(json);
+// connect to Infura node
+var web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/v61hsMvKfFW08T9q4Msu'));
+//var web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/<REDACTED API KEY"));
+
+// the address that will send the test transaction
+const addressFrom = '0x14459BEDE031d10a5Ab31b6a14D01e151Fac6cAC';
+const privKey = '8dbac216bcbbcc319b459e1a0535e807a0733b0c39919d1fb0331f8891046e66';
+
+// the destination address
+const addressTo = '0x4385F93020615f9792308f882FB1C5aBC13bD68f';
+
+web3.eth.getTransactionCount(addressFrom, function (err, nonce) {
+    var data = json;
+
+    var tx = new ethereumjs.Tx({
+      nonce: nonce,
+      gasPrice: web3.toHex(web3.toWei('1', 'gwei')),
+      gasLimit: 100000,
+      to: addressTo,
+      value: 0,
+      data: data,
+    });
+    tx.sign(ethereumjs.Buffer.Buffer.from(privKey, 'hex'));
+
+    var raw = '0x' + tx.serialize().toString('hex');
+    web3.eth.sendRawTransaction(raw, function (err, transactionHash) {
+      console.log(transactionHash);
+      localStorage.transaction = transactionHash;
+      window.location.href ="blockchainConfirmation.html";
+    });
+  });
+});
+
+</script>
+</html>

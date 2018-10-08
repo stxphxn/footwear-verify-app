@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shoesform</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="writetag">
+    <div class="col-md-12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form class="bootstrap-form-with-validation">
+                        <h2 class="text-left">Add your shoes</h2>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Name </label>
+                            <input class="form-control" type="text" name="text-input" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">SKU </label>
+                            <input class="form-control" type="text" name="text-input" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Release Date</label>
+                            <input class="form-control" type="text" name="text-input" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Original Retail Price</label>
+                            <input class="form-control" type="text" name="text-input" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Shoe Size</label>
+                            <select class="form-control">
+                                <optgroup label="None">
+                                    <option value="3.5">UK 3.5</option>
+                                    <option value="4">UK 4</option>
+                                    <option value="4.5">UK 4.5</option>
+                                    <option value="5">UK 5</option>
+                                    <option value="5.5">UK 5.5</option>
+                                    <option value="6">UK 6 </option>
+                                    <option value="6.5">UK 6.5</option>
+                                    <option value="7">UK 7</option>
+                                    <option value="7.5">UK 7.5</option>
+                                    <option value="8">UK 8</option>
+                                    <option value="8.5">UK 8.5</option>
+                                    <option value="9">UK 9</option>
+                                    <option value="9.5">UK 9.5</option>
+                                    <option value="10">UK 10</option>
+                                    <option value="10.5">UK 10.5</option>
+                                    <option value="11">UK 11</option>
+                                    <option value="11.5">UK 11.5</option>
+                                    <option value="12">UK 12</option>
+                                    <option value="12.5">UK 12.5</option>
+                                    <option value="13">UK 13</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">NFC ID</label>
+                            <input class="form-control" type="text" name="Id">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary create" type="button">Create Tag</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/WebForm/node_modules/web3/dist/web3.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+</body>
+<script>
+app.initialize();
+var app = {
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    // deviceready Event Handler
+    //
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'app.receivedEvent(...);'
+    onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+        //nfc.addNdefListener(app.writeNfc);
+        app.scanBarcode();
+    },
+
+    readyToWrite: function() {
+
+        nfc.addNdefListener(app.writeNfc);
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+        var parentElement = document.getElementById(id);
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+    },
+
+    onNfc: function(nfcEvent) {
+        var tag = nfcEvent.tag,
+            message = tag.ndefMessage,
+            record = message[0],
+            value;
+
+        if (util.isType(record, ndef.TNF_WELL_KNOWN, ndef.RTD_URI)) {
+            value = ndef.uriHelper.decodePayload(record.payload);
+
+        } else if (util.isType(record, ndef.TNF_WELL_KNOWN, ndef.RTD_TEXT)) {
+            value = ndef.textHelper.decodePayload(record.payload);
+
+        } else {
+            value = JSON.stringify(record);
+
+        }
+
+        alert(value);
+
+    },
+
+    writeNfc: function(nfcEvent) {
+        // message is an array of records
+        var message = [
+            ndef.textRecord("It works")
+        ];
+        nfc.write(message, app.onWriteSuccess, app.onWriteFail);
+    },
+    onWriteSuccess: function() {
+        alert("Write Success!");
+    },
+    onWriteFail: function() {
+        alert("Write Failed!");
+    },
+
+    scanBarcode: function() {
+
+      cordova.plugins.barcodeScanner.scan(
+      function (result) {
+          alert("We got a barcode\n" +
+                "Result: " + result.text + "\n" +
+                "Format: " + result.format + "\n" +
+                "Cancelled: " + result.cancelled);
+                localStorage.barcode = result.text;
+                window.location.href ="barcodeCheck.html";
+      },
+      function (error) {
+          alert("Scanning failed: " + error);
+      },
+      {
+          preferFrontCamera : false, // iOS and Android
+          showFlipCameraButton : true, // iOS and Android
+          showTorchButton : true, // iOS and Android
+          torchOn: false, // Android, launch with the torch switched on (if available)
+          saveHistory: false, // Android, save scan history (default false)
+          prompt : "Place a barcode inside the scan area", // Android
+          resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+          //formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+          orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+          disableAnimations : true, // iOS
+          disableSuccessBeep: false // iOS and Android
+      }
+   );
+
+    }
+
+
+};
+</script>
+</html>

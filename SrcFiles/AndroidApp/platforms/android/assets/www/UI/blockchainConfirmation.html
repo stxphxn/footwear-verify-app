@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Confirmed</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<script>
+var transactionID = localStorage.transaction;
+$("#transactionid").html("Your transaction hash: "+transactionID)
+</script>
+<body class="writetag">
+    <div class="container">
+        <h1>Your transaction has successfully been created!</h1>
+        <h5 id="transactionid"></h5>
+        <h1>You can now tap your NFC tag to finish the process.</h1>
+
+      </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+</body>
+<script>
+app.initialize();
+var app = {
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    // deviceready Event Handler
+    //
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'app.receivedEvent(...);'
+    onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+        nfc.addNdefListener(app.writeNfc);
+    },
+
+    readyToWrite: function() {
+
+        nfc.addNdefListener(app.writeNfc);
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+        var parentElement = document.getElementById(id);
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+    },
+
+    onNfc: function(nfcEvent) {
+        var tag = nfcEvent.tag,
+            message = tag.ndefMessage,
+            record = message[0],
+            value;
+
+        if (util.isType(record, ndef.TNF_WELL_KNOWN, ndef.RTD_URI)) {
+            value = ndef.uriHelper.decodePayload(record.payload);
+
+        } else if (util.isType(record, ndef.TNF_WELL_KNOWN, ndef.RTD_TEXT)) {
+            value = ndef.textHelper.decodePayload(record.payload);
+
+        } else {
+            value = JSON.stringify(record);
+
+        }
+
+        alert(value);
+
+    },
+
+    writeNfc: function(nfcEvent) {
+        // message is an array of records
+        var message = [
+            ndef.textRecord(transactionId)
+        ];
+        nfc.write(message, app.onWriteSuccess, app.onWriteFail);
+    },
+    onWriteSuccess: function() {
+        alert("Write Success!");
+    },
+    onWriteFail: function() {
+        alert("Write Failed!");
+    },
+
+
+
+
+};
+</script>
+</html>

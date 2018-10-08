@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script>
+
+var barcode = '889773948128';
+
+$.get(
+  "https://www.googleapis.com/customsearch/v1",
+  {q : '889773948128',
+  cx : '011378853985084255944:davb55rnxhg',
+  key : 'AIzaSyCEvYPtohZtc-SMj2B9nFXMq1pIPbIdTrI',
+  num : 1,
+  fields: 'items/pagemap/product, items/pagemap/metatags/og:image' },
+  function(data){
+    alert(data.items[0].pagemap.product[0].brand);
+  },
+  "json"
+);
+
+    </script>
+  </head>
+  <body>
+    <div id="results"></div>
+  </body>
+</html>

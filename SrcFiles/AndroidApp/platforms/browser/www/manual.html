@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!-- Screen for manual data entry -->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shoesform</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+</head>
+
+<body class="writetag">
+    <div class="col-md-12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form class="bootstrap-form-with-validation" id="manual" method="post" action="#">
+                        <h2 class="text-left">Add your shoes</h2>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Name </label>
+                            <input class="form-control" type="text" name="name" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">SKU </label>
+                            <input class="form-control" type="text" name="code" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Release Date</label>
+                            <input class="form-control" type="text" name="release" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="text-input">Original Retail Price</label>
+                            <input class="form-control" type="text" name="retail" id="text-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Shoe Size</label>
+                            <select class="form-control" name="size">
+                                <optgroup label="None">
+                                    <option value="3.5">UK 3.5</option>
+                                    <option value="4">UK 4</option>
+                                    <option value="4.5">UK 4.5</option>
+                                    <option value="5">UK 5</option>
+                                    <option value="5.5">UK 5.5</option>
+                                    <option value="6">UK 6 </option>
+                                    <option value="6.5">UK 6.5</option>
+                                    <option value="7">UK 7</option>
+                                    <option value="7.5">UK 7.5</option>
+                                    <option value="8">UK 8</option>
+                                    <option value="8.5">UK 8.5</option>
+                                    <option value="9">UK 9</option>
+                                    <option value="9.5">UK 9.5</option>
+                                    <option value="10">UK 10</option>
+                                    <option value="10.5">UK 10.5</option>
+                                    <option value="11">UK 11</option>
+                                    <option value="11.5">UK 11.5</option>
+                                    <option value="12">UK 12</option>
+                                    <option value="12.5">UK 12.5</option>
+                                    <option value="13">UK 13</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">NFC ID</label>
+                            <input class="form-control" type="text" name="n">
+                        </div>
+                        <div class="form-group">
+
+                            <input type="submit" value="Convert Tag" class="btn btn-primary create"  />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script src="js/config.js"></script>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/ethereumjs-all.min.js"></script>
+<script src="js/aes.js"></script>
+<script src="assets/js/web3.min.js"></script>
+<script>
+
+// connect to Infura node
+var web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/v61hsMvKfFW08T9q4Msu'));
+
+
+// the address that will send the test transaction
+const addressFrom = '0x14459BEDE031d10a5Ab31b6a14D01e151Fac6cAC';
+const privKey = config.PRIV_KEY;
+
+// the destination address
+const addressTo = '0x4385F93020615f9792308f882FB1C5aBC13bD68f';
+// function to add form data to a JSON object
+  function toJSONString(form) {
+    var obj = {};
+    var elements = form.querySelectorAll( "input, select, textarea" );
+    for( var i = 0; i < elements.length; ++i ) {
+      var element = elements[i];
+      var name = element.name;
+      var value = element.value;
+
+      if( name ) {
+        obj[ name ] = value;
+      }
+    }
+    //encrypt the NFC ID
+    var encrypt = CryptoJS.AES.encrypt(obj.n, config.PRIV_KEY);
+    obj.n = encrypt.toString();
+    return JSON.stringify( obj );
+  }
+
+  document.addEventListener( "DOMContentLoaded", function() {
+    var form = document.getElementById( "manual" );
+// listen for create tag button
+    form.addEventListener( "submit", function( e ) {
+      e.preventDefault();
+      json = toJSONString( this );//Get data
+
+        //get nonce
+        web3.eth.getTransactionCount(addressFrom, function (err, nonce) {
+
+            //Create raw transaction
+            var tx = new ethereumjs.Tx({
+              nonce: nonce,
+              gasPrice: web3.toHex(web3.toWei('1', 'gwei')),
+              gasLimit: 50000,
+              to: addressTo,
+              value: 0,
+              data: json,
+            });
+            tx.sign(ethereumjs.Buffer.Buffer.from(privKey, 'hex')); //Sign transaction
+
+            var raw = '0x' + tx.serialize().toString('hex');
+            web3.eth.sendRawTransaction(raw, function (err, transactionHash) {
+              console.log(err);
+              console.log(transactionHash);
+              alert("Transaction Successful "+transactionHash);
+              localStorage.transaction = transactionHash; //store hash
+              window.location.href ="writeTagScreen.html";// go to write tag screen
+            });
+          });
+
+    }, false);
+
+  });
+
+
+
+</script>
+</html>

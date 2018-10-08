@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Scan NFC tag</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style media="screen">
+		#clickme {
+	cursor: pointer;
+}
+
+#onlinehulp {
+	bottom: 0;
+	color: #fff;
+	height: 30px;
+	margin: 0 auto;
+	position: absolute;
+	right: 0;
+	width: 180px;
+}
+
+#contact-online {
+	background: #FFF none repeat scroll 0 0;
+	display: none;
+	margin-top: -13px;
+	box-shadow: 0px 0px 10px #888888;
+	height:224px;
+	border-radius: 0;
+}
+		</style>
+	</head>
+	<body style="min-height:0;">
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Wrapper -->
+					<div id="wrapper">
+
+						<!-- Panel -->
+							<section class="panel color2-alt" style="height:730px">
+
+								<div class="inner columns aligned">
+									<div class="span-2-75" style="margin-top: -390px;">
+
+										<h1 class="major">Scan your shoes</h1>
+										<br/>
+										<br/>
+										<br/>
+										<p style ="text-align: center"><b>Tap the nfc tag embedded on your shoe with the back of the phone</b></p>
+										<div style="bottom:30px; position:absolute;">
+
+										<label for="name" style="text-align:center;">Enter your transaction ID manually</label>
+										<input type = "text" name="transaction" id="transaction" value="Enter your transaction ID" style="width:355px;"
+										onfocus='if(this.value=="Enter your transaction ID"){this.value="";}'/>
+
+									</div>
+									</div>
+
+								</div>
+							</section>
+
+
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script>
+			var transaction = document.getElementById("transaction");
+			transaction.addEventListener("keydown", function (e) {
+    	if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+				var id = document.getElementById("transaction").value;
+				localStorage.setItem('transactionID', id);
+				window.location.href = "http://localhost:3000/WebForm/result.html";
+    }
+});
+
+			</script>
+
+	</body>
+</html>

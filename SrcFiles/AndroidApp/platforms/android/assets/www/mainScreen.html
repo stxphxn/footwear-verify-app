@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shoesform</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/web3.min.js"></script>
+
+</head>
+
+<body class="mainscreen">
+  <img id ="photo" src="assets/img/bg.jpg" width="100%">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 id="name"></h2>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="sku"></h3>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="size"></h3>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="release"></h3>
+                  </div>
+
+                  <div class="col-md-12">
+                      <h3 id="retail"></h3>
+                    </div>
+                  <div class="col-md-12">
+                    <p id= "description" style="color:white"></p>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+<script>
+var web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/v61hsMvKfFW08T9q4Msu'));
+var brand, name, photo, colour, sku, transactionID, nid, tnid, description;
+var data, obj;
+
+// if(typeof localStorage.transaction != 'undefined')
+// {
+//   transactionID = localStorage.transaction;
+// }
+// if(typeof localStorage.nid != 'undefined')
+// {
+//   nid = localStorage.nid;
+// }
+transactionID = '0x574302b2615d8483f89975248117de974bf9f8ed4f58fccba3c445f9d1ac8e74';
+nid = "12345";
+
+web3.eth.getTransaction(transactionID, function(err, transaction){
+  if(!err){
+  console.log(transaction);
+  data = transaction.input;
+  obj = JSON.parse(web3.toAscii(data));
+  }
+  else{
+console.log(err);
+}
+
+
+if(typeof obj.c != 'undefined')
+{
+  sku = obj.c;
+  size = obj.s;
+  tnid = obj.n;
+
+  if(nid !== tnid){}
+  else{
+  $.get(
+    "https://www.googleapis.com/customsearch/v1",
+    {
+    q : sku,
+    cx : '011378853985084255944:davb55rnxhg',
+    key : 'AIzaSyCEvYPtohZtc-SMj2B9nFXMq1pIPbIdTrI',
+    num : 1,
+    siteSearch: 'stadiumgoods.com',
+    fields: 'items/pagemap/product, items/pagemap/metatags/og:image, items/pagemap/metatags/og:description' },
+
+    function(data){
+    brand = data.items[0].pagemap.product[0].brand;
+    name = data.items[0].pagemap.product[0].name;
+    colour = data.items[0].pagemap.product[0].color;
+    sku = data.items[0].pagemap.product[0].sku;
+    $("#name").html(brand+" "+name+" "+colour);
+    $("#sku").html("Style code: "+sku);
+    $("#size").html("Size: "+size);
+    description = data.items[0].pagemap.metatags[0]['og:description'];
+    $("#description").html(description);
+    photo = data.items[0].pagemap.metatags[0]['og:image'];
+    $("#photo").attr("src", photo);
+    },
+    "json"
+  );
+  }
+}
+    else{alert(obj);};
+    });
+
+</script>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Confirmed - Ready to write</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="writetag">
+    <div class="container">
+        <h2>Your transaction has successfully been created!</h2>
+        <h4 id="transactionid"></h4>
+
+        <div id="deviceready" class="blink">
+            <h3 class="event listening" style="color:white;">Loading</h3>
+            <h3 class="event received">Device is Ready to write tag</h3>
+        </div>
+
+      </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/writeTag.js"></script>
+
+</body>
+
+<script>
+app.initialize();
+
+</script>
+</html>

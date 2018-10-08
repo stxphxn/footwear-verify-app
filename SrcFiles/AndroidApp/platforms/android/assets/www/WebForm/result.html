@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Result Page</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+<script>
+var transactionID = localStorage.getItem('transactionID');
+console.log(transactionID);
+</script>
+	</head>
+	<body>
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Wrapper -->
+					<div id="wrapper">
+
+						<!-- Panel (Banner) -->
+							<section class="panel banner right" id="first">
+								<div class="content color0 span-3-75">
+									<h1 class="major" id="name"></h1>
+									<p><strong>Style Code:</strong> <span id="code"></span></p>
+									<p><strong>Release Date:</strong> <span id="release"></span></p>
+									<p><strong>Original Retail Price:</strong> <span id="retail"></span></p>
+									<p><strong>Size:</strong> <span id="size"></span></p>
+									<!-- <p><a href="https://html5up.net">View this transaction on Etherscan.</a></p> -->
+									<ul class="actions">
+										<li><a href="scan.html" class="button special color1 circle icon fa-angle-left">Next</a></li>
+									</ul>
+								</div>
+								<div class="image filtered span-1-75" data-position="25% 25%">
+									<img id="bg" src="images/pic01.jpg" alt="" />
+								</div>
+							</section>
+
+
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="./node_modules/web3/dist/web3.min.js"></script>
+			<script type="text/javascript">
+
+					var obj;
+	        // MetaMask injects the web3 library for us.
+	           window.onload = function() {
+	             if (typeof web3 === 'undefined') {
+	               document.getElementById('meta-mask-required').innerHTML = 'You need <a href="https://metamask.io/">MetaMask</a> browser plugin to run this example'
+							 }
+
+
+								 web3.eth.getTransaction(transactionID,function(err, transaction){
+									 if(!err){
+									 console.log(transaction);
+									 var data = transaction.input;
+		               obj = JSON.parse(web3.toAscii(data));
+		             document.getElementById('name').innerHTML = obj.name;
+								 document.getElementById('code').innerHTML = obj.styleCode;
+								 document.getElementById('release').innerHTML = obj.release;
+								 document.getElementById('retail').innerHTML = obj.retail;
+								 document.getElementById('size').innerHTML = obj.size;
+								 document.getElementById('bg').src = "trainers/"+obj.styleCode+".jpg";
+							 }
+
+								//  var str1 ="https://www.googleapis.com/customsearch/v1?q=site%3Asolecollector.com%2Fsd+"
+								//  var str2 = obj.styleCode;
+								//  var str3 ="&amp;cx=011378853985084255944%3Adavb55rnxhg&amp;imgSize=large&amp;num=1&amp;fields=items%2Fpagemap%2Fmetatags%2Fog%3Aimage&amp;key=AIzaSyCEvYPtohZtc-SMj2B9nFXMq1pIPbIdTrI&amp;callback=hndlr"
+								//  var res = str1.concat(str2, str3);
+								//  var script = document.createElement('script');
+								//  script.src = res;
+								//  document.body.appendChild(script);
+								 ;})
+							 }
+
+
+						//  var bg;
+						//  function hndlr(response) {
+						// 	 bg = response.items[0].pagemap.metatags[0]['og:image'];
+						// 	 console.log(bg);
+						// 	 document.getElementById('bg').src = bg;
+						//  }
+
+	    </script>
+			<!-- <script src="https://www.googleapis.com/customsearch/v1?q=site%3Asolecollector.com%2Fsd+&amp;cx=011378853985084255944%3Adavb55rnxhg&amp;imgSize=large&amp;num=1&amp;fields=items%2Fpagemap%2Fmetatags%2Fog%3Aimage&amp;key=AIzaSyCEvYPtohZtc-SMj2B9nFXMq1pIPbIdTrI&amp;callback=hndlr"></script> -->
+
+	</body>
+</html>

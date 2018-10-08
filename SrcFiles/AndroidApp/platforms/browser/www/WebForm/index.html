@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <title>Add record</title>
+
+
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+<body>
+  <!-- Page Wrapper -->
+    <div id="page-wrapper">
+
+      <!-- Wrapper -->
+        <div id="wrapper">
+  <!-- Panel -->
+    <section class="panel color4-alt">
+      <div class="inner columns divided">
+        <div class="span-3-25">
+          <h2 class="major">Add your shoes</h2>
+          <form id="test" method="post" action="#">
+            <div class="field half">
+              <label for="name">Name</label>
+              <input type="text" name="name" id="name" />
+            </div>
+            <div class="field half">
+              <label for="styleCode">Style Code</label>
+              <input type="text" name="styleCode" id="styleCode" />
+            </div>
+            <div class="field half">
+              <label for="release">Release Date</label>
+              <input type="text" name="release" id="release" />
+            </div>
+            <div class="field half">
+              <label for="retail">Original retail price</label>
+              <input type="text" name="retail" id="retail" />
+            </div>
+            <div class="field">
+              <label for="size">Shoe size</label>
+              <select name="size">
+            		<option value="none" selected="selected">None</option>
+            		<option value="UK3.5">UK 3.5</option>
+                <option value="UK4">UK 4</option>
+                <option value="UK4.5">UK 4.5</option>
+                <option value="UK5">UK 5</option>
+                <option value="UK5.5">UK 5.5</option>
+                <option value="UK6">UK 6</option>
+                <option value="UK6.5">UK 6.5</option>
+                <option value="UK7">UK 7</option>
+                <option value="UK7.5">UK 7.5</option>
+                <option value="UK8">UK 8</option>
+                <option value="UK8.5">UK 8.5</option>
+                <option value="UK9">UK 9</option>
+                <option value="UK9.5">UK 9.5</option>
+                <option value="UK10">UK 10</option>
+                <option value="UK10.5">UK 10.5</option>
+                <option value="UK11">UK 11</option>
+                <option value="UK11.5">UK 11.5</option>
+                <option value="UK12">UK 12</option>
+                <option value="UK12.5">UK 12.5</option>
+                <option value="UK13">UK 13</option>
+            	</select>
+            </div>
+            <ul class="actions">
+              <li><input type="submit" value="Convert to JSON" class="button special" /></li>
+              <li><button id="button">Add record</button></li>
+            </ul>
+          </form>
+          <pre><code><p id="output"></p></code><code style="text-align: end;"><button onclick="copyFunction('#output')" class ="button small">COPY</button></code></pre>
+        </div>
+
+
+      </div>
+
+    </section>
+</div>
+</div>
+
+    <!-- <div class="container">
+<div id="meta-mask-required"></div>
+<form id="test" action="#" method="post">
+    <div class="form-group">
+        <label for="name" class="col-lg-2 control-label">Name</label>
+        <input class="form-control" type="text" name="name" id="name" />
+    </div>
+    <div class="form-group">
+        <label for="name" class="col-lg-2 control-label">Style Code</label>
+        <input class="form-control" type="text" name="styleCode" id="styleCode" />
+    </div>
+    <div class="form-group">
+        <label for="name" class="col-lg-2 control-label">Original Retail Price</label>
+        <input class="form-control" type="text" name="retail" id="retail" />
+    </div>
+    <div class="form-group">
+        <label for="name" class="col-lg-2 control-label">Release Date</label>
+        <input class="form-control" type="text" name="release" id="release" />
+    </div>
+    <div class="form-group">
+    	<label for="select" class="col-lg-2 control-label">Select shoe size</label>
+    	<select name="size" class="form-control">
+    		<option value="none" selected="selected">None</option>
+    		<option value="UK3.5">UK 3.5</option>
+        <option value="UK4">UK 4</option>
+        <option value="UK4.5">UK 4.5</option>
+        <option value="UK5">UK 5</option>
+        <option value="UK5.5">UK 5.5</option>
+        <option value="UK6">UK 6</option>
+        <option value="UK6.5">UK 6.5</option>
+        <option value="UK7">UK 7</option>
+        <option value="UK7.5">UK 7.5</option>
+        <option value="UK8">UK 8</option>
+        <option value="UK8.5">UK 8.5</option>
+        <option value="UK9">UK 9</option>
+        <option value="UK9.5">UK 9.5</option>
+        <option value="UK10">UK 10</option>
+        <option value="UK10.5">UK 10.5</option>
+        <option value="UK11">UK 11</option>
+        <option value="UK11.5">UK 11.5</option>
+        <option value="UK12">UK 12</option>
+        <option value="UK12.5">UK 12.5</option>
+        <option value="UK13">UK 13</option>
+    	</select>
+
+    </div>
+    <p>
+      <input type="submit" value="Convert to JSON" class="btn btn-primary btn-block" />
+      <button id="button">Add record</button>
+    </p>
+</form> -->
+
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script type="text/javascript">
+var json;
+
+  function toJSONString(form) {
+    var obj = {};
+    var elements = form.querySelectorAll( "input, select, textarea" );
+    for( var i = 0; i < elements.length; ++i ) {
+      var element = elements[i];
+      var name = element.name;
+      var value = element.value;
+
+      if( name ) {
+        obj[ name ] = value;
+      }
+    }
+
+    return JSON.stringify( obj );
+  }
+
+  document.addEventListener( "DOMContentLoaded", function() {
+    var form = document.getElementById( "manual" );
+
+    form.addEventListener( "submit", function( e ) {
+      e.preventDefault();
+      json = toJSONString( this );
+
+        var str = web3.toHex(json);
+
+
+
+    }, false);
+
+  });
+
+})();
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+   <script>
+   // MetaMask injects the web3 library for us.
+      window.onload = function() {
+        if (typeof web3 === 'undefined') {
+          document.getElementById('meta-mask-required').innerHTML = 'You need <a href="https://metamask.io/">MetaMask</a> browser plugin to run this example'
+        }
+      }
+
+
+
+
+        function copyFunction(element) {
+          var $temp = $("<input>");
+          $("body").append($temp);
+          $temp.val($(element).text()).select();
+          document.execCommand("copy");
+          $temp.remove();
+        }
+
+   </script>
+
+</body>
+</html>

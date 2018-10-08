@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- Results screen
+Retrieves a transaction and then confirms if shoes are authentic -->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Screen</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/web3.min.js"></script>
+
+</head>
+
+<body class="mainscreen">
+
+  <img id ="photo" src="assets/img/Spin-1s-200px.svg" width="100%">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 id="name"></h2>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="sku"></h3>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="size"></h3>
+                  </div>
+                <div class="col-md-12">
+                    <h3 id="release"></h3>
+                  </div>
+
+                  <div class="col-md-12">
+                      <h3 id="retail"></h3>
+                    </div>
+                  <div class="col-md-12">
+                    <p id= "description" style="color:white"></p>
+                  </div>
+                  <div class="col-md-12">
+                    <p style="color:white"><a href="index.html">Back to Main Menu</a></p>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/aes.js"></script>
+</body>
+<script>
+//Initialise web3
+var web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/v61hsMvKfFW08T9q4Msu'));
+var brand, name, photo, colour, sku, transactionID, nid, tnid, description;
+var data, obj;
+
+//Check that tag has been scanned
+if(typeof localStorage.transaction != 'undefined')
+{
+  transactionID = localStorage.transaction;
+}
+if(typeof localStorage.nid != 'undefined')
+{
+  nid = localStorage.nid;
+}
+
+//get transaction
+web3.eth.getTransaction(transactionID, function(err, transaction){
+  if(!err){
+  console.log(transaction);
+  data = transaction.input;
+  obj = JSON.parse(web3.toAscii(data));
+  var decrypt = CryptoJS.AES.decrypt(obj.n, config.PRIV_KEY); //decrypt the NFC ID field
+  obj.n = decrypt.toString(CryptoJS.enc.Utf8);
+  }
+  else{
+console.log(err);
+}
+
+//Check if shoes were added by barcode
+if(typeof obj.c != 'undefined')
+{
+  sku = obj.c;
+  size = obj.s;
+  tnid = obj.n;
+  // If the IDs don't match
+  //Shoes can't be verified
+  if(nid !== tnid)
+  {
+    $("#name").html("Shoes cannot be verified");
+    $("#sku").html("Your shoes may be counterfeit");
+  }
+  else{
+    //Fetch footwear details from api
+  $.get(
+    "https://www.googleapis.com/customsearch/v1",
+    {
+    q : sku,
+    cx : '011378853985084255944:davb55rnxhg',
+    key : config.GOOGLE_API,
+    num : 1,
+    siteSearch: 'stadiumgoods.com',
+    fields: 'items/pagemap/product, items/pagemap/metatags/og:image, items/pagemap/metatags/og:description' },
+    //Populate result screen with details
+    function(data){
+    brand = data.items[0].pagemap.product[0].brand;
+    name = data.items[0].pagemap.product[0].name;
+    colour = data.items[0].pagemap.product[0].color;
+    sku = data.items[0].pagemap.product[0].sku;
+    $("#name").html(brand+" "+name+" "+colour);
+    $("#sku").html("Style code: "+sku);
+    $("#size").html("Size: "+size);
+    description = data.items[0].pagemap.metatags[0]['og:description'];
+    $("#description").html(description);
+    photo = data.items[0].pagemap.metatags[0]['og:image'];
+    $("#photo").attr("src", photo);
+    },
+    "json"
+  );
+  }
+}
+  //If shoes were added manually
+    else{
+      tnid = obj.n;
+      //Check if Ids match
+      if(nid !== tnid)
+      {
+        //IDs don't match
+        $("#name").html("Shoes cannot be verified");
+        $("#sku").html("Your shoes may be counterfeit");
+      }
+      else{
+        //Populate data if they do
+        $("#name").html(obj.name);
+        $("#sku").html("Style code: "+obj.code);
+        $("#size").html("Size: "+obj.size);
+        $("#release").html("Release Date: "+obj.release);
+        $("#retail").html("Retail Price: "+obj.retail);
+      }
+
+    };
+    });
+
+</script>
+</html>
